@@ -1,4 +1,4 @@
-const obraModel = require("../models/obraModel");
+const equipamientoModel = require("../models/equipamientoModel");
 const { uploadFile, getFileStream, deleteFile } = require("../utils/s3");
 const fs = require("fs");
 const util = require("util");
@@ -7,8 +7,8 @@ const unlinkFile = util.promisify(fs.unlink);
 module.exports = {
   getAll: async function (req, res, next) {
     try {
-      const obras = await obraModel.find();
-      res.status(200).json(obras);
+      const equipamientos = await equipamientoModel.find();
+      res.status(200).json(equipamientos);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
@@ -19,8 +19,8 @@ module.exports = {
       return res.status(400).send({ error: true, message: "id can´t be undefined" });
     }
     try {
-      const obra = await obraModel.findById(req.params.id);
-      res.status(200).json(obra);
+      const equipamiento = await equipamientoModel.findById(req.params.id);
+      res.status(200).json(equipamiento);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
@@ -81,7 +81,7 @@ module.exports = {
       });
     }
 
-    const document = new obraModel({
+    const document = new equipamientoModel({
       title: req.body.title,
       subtitle: req.body.subtitle,
       year: req.body.year,
@@ -91,8 +91,8 @@ module.exports = {
     });
 
     try {
-      const newObra = await document.save();
-      res.status(200).json(newObra);
+      const newEquipamiento = await document.save();
+      res.status(200).json(newEquipamiento);
     } catch (e) {
       console.log(e);
       try {
@@ -121,7 +121,7 @@ module.exports = {
     const cover = req.file;
     let documentToBeUpdated = "";
     try {
-      documentToBeUpdated = await obraModel.findById({ _id: documentId });
+      documentToBeUpdated = await equipamientoModel.findById({ _id: documentId });
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
@@ -141,9 +141,9 @@ module.exports = {
     };
 
     try {
-      await obraModel.updateOne({ _id: documentId }, documentToBeUpdated);
-      let updatedObra = await obraModel.findById({ _id: documentId });
-      return res.status(200).json(updatedObra);
+      await equipamientoModel.updateOne({ _id: documentId }, documentToBeUpdated);
+      let updatedEquipamiento = await equipamientoModel.findById({ _id: documentId });
+      return res.status(200).json(updatedEquipamiento);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: "Couldn´t update document in DB." });
@@ -161,7 +161,7 @@ module.exports = {
     const documentId = req.params.id;
     let dataToBeUpdated = "";
     try {
-      dataToBeUpdated = await obraModel.findById({ _id: documentId });
+      dataToBeUpdated = await equipamientoModel.findById({ _id: documentId });
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
@@ -173,9 +173,9 @@ module.exports = {
     dataToBeUpdated.text = req.body.text;
 
     try {
-      await obraModel.updateOne({ _id: documentId }, dataToBeUpdated);
-      let updatedObra = await obraModel.findById({ _id: documentId });
-      return res.status(200).json(updatedObra);
+      await equipamientoModel.updateOne({ _id: documentId }, dataToBeUpdated);
+      let updatedEquipamiento = await equipamientoModel.findById({ _id: documentId });
+      return res.status(200).json(updatedEquipamiento);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: "Couldn´t update record in DB." });
@@ -191,7 +191,7 @@ module.exports = {
     const documentId = req.params.id;
     let documentToBeUpdated = "";
     try {
-      documentToBeUpdated = await obraModel.findById({ _id: documentId });
+      documentToBeUpdated = await equipamientoModel.findById({ _id: documentId });
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
@@ -215,9 +215,9 @@ module.exports = {
       documentToBeUpdated.images.push(imageForMongo);
     }
     try {
-      await obraModel.updateOne({ _id: documentId }, documentToBeUpdated);
-      let updatedObra = await obraModel.findById({ _id: documentId });
-      return res.status(200).json(updatedObra);
+      await equipamientoModel.updateOne({ _id: documentId }, documentToBeUpdated);
+      let updatedEquipamiento = await equipamientoModel.findById({ _id: documentId });
+      return res.status(200).json(updatedEquipamiento);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: "Couldn´t update record in DB." });
@@ -234,11 +234,11 @@ module.exports = {
     const newImagesArray = req.body;
     let documentToBeUpdated = "";
     try {
-      documentToBeUpdated = await obraModel.findById({ _id: documentId });
+      documentToBeUpdated = await equipamientoModel.findById({ _id: documentId });
       documentToBeUpdated.images = newImagesArray;
-      await obraModel.updateOne({ _id: documentId }, documentToBeUpdated);
-      let updatedObra = await obraModel.findById({ _id: documentId });
-      return res.status(200).json(updatedObra);
+      await equipamientoModel.updateOne({ _id: documentId }, documentToBeUpdated);
+      let updatedEquipamiento = await equipamientoModel.findById({ _id: documentId });
+      return res.status(200).json(updatedEquipamiento);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
@@ -250,12 +250,12 @@ module.exports = {
     }
     const id = req.params.id;
     try {
-      const record = await obraModel.findById({ _id: id });
+      const record = await equipamientoModel.findById({ _id: id });
       if (record.cover.length) await deleteFile(record.cover[0].path);
       if (record.images.length) {
         record.images.forEach(image => deleteFile(image.path));
       }
-      const deleteStatus = await obraModel.deleteOne({ _id: id });
+      const deleteStatus = await equipamientoModel.deleteOne({ _id: id });
       res.status(200).json(deleteStatus);
     } catch (e) {
       console.log(e);
@@ -273,7 +273,6 @@ module.exports = {
       return res.status(400).send({ error: true, message: "Bad request" });
     }
     const key = req.params.key;
-    const section = req.query.section;
     const documentId = req.query.documentId;
     const imageId = req.query.imageId;
     const coverFlag = req.query.coverFlag;
@@ -285,7 +284,7 @@ module.exports = {
       return res.status(500).send({ error: true, message: "Couldn´t delete record from s3." });
     }
     try {
-      document = await obraModel.findById({ _id: documentId });
+      document = await equipamientoModel.findById({ _id: documentId });
       if (coverFlag === "true") {
         await document.cover.id(imageId).remove();
       } else {

@@ -15,7 +15,7 @@ const {
   updateCover,
   updateText,
   updateImages,
-} = require("../controllers/obrasController");
+} = require("../controllers/equipamientosController");
 
 router.get("/", getAll);
 router.get("/:id", getById);

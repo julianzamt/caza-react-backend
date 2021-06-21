@@ -1,0 +1,5 @@
+const TEXT_LIMIT = 300;
+const TITLE_LIMIT = 25;
+const SUBTITLE_LIMIT = 50;
+
+module.exports = { TEXT_LIMIT, TITLE_LIMIT, SUBTITLE_LIMIT };

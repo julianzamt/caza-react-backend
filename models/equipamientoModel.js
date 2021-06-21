@@ -14,7 +14,7 @@ const ImageSchema = new mongoose.Schema({
   },
 });
 
-const ObraSchema = new mongoose.Schema({
+const EquipamientoSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, errorMessages.GENERAL.required],
@@ -28,6 +28,6 @@ const ObraSchema = new mongoose.Schema({
   images: [ImageSchema],
 });
 
-const Obra = mongoose.model("obra", ObraSchema);
+const Equipamiento = mongoose.model("Equipamiento", EquipamientoSchema);
 
-module.exports = Obra;
+module.exports = Equipamiento;
