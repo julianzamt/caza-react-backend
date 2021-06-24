@@ -6,12 +6,14 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 
 const usersRouter = require("./routes/users");
 const obrasRouter = require("./routes/obras");
 const proyectosRouter = require("./routes/proyectos");
 const equipamientosRouter = require("./routes/equipamientos");
 const documentacionRouter = require("./routes/documentacion");
+// const productosRouter = require("./routes/productos");
 
 var app = express();
 
@@ -26,7 +28,24 @@ app.use("/obras", obrasRouter);
 app.use("/proyectos", proyectosRouter);
 app.use("/equipamientos", equipamientosRouter);
 app.use("/documentacion", documentacionRouter);
+// app.use("/productos", productosRouter);
 app.use("/users", usersRouter);
+
+//Token configuration
+app.set("secretKey", "chudu");
+
+const validateUser = (req, res, next) => {
+  jwt.verify(req.headers["x-access-token"], req.app.get("secretKey"), (err, decoded) => {
+    if (err) {
+      res.json({ message: err.message });
+    } else {
+      req.body.tokenData = decoded;
+      next();
+    }
+  });
+};
+
+app.validateUser = validateUser;
 
 // catch 404 and forward to error handler
 // app.use(function (req, res, next) {
