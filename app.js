@@ -34,10 +34,14 @@ app.use("/documentacion", documentacionRouter);
 app.use("/users", usersRouter);
 
 //Token configuration
-app.set("secretKey", "chudu");
+app.set("secretKey", process.env.JWT_SECRET_KEY);
 
 const validateUser = (req, res, next) => {
-  jwt.verify(req.headers["x-access-token"], req.app.get("secretKey"), (err, decoded) => {
+  const token = req.headers["x-access-token"];
+  if (!token) {
+    res.status(500).json({ message: "user unauthenticated" });
+  }
+  jwt.verify(token, req.app.get("secretKey"), (err, decoded) => {
     if (err) {
       res.json({ message: err.message });
     } else {

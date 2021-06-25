@@ -40,10 +40,10 @@ module.exports = {
     try {
       const user = await userModel.findOne({ username: req.body.username });
       if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
-        return res.status(400).json({ error: true, message: errorMessages.badUserOrPassword });
+        return res.status(400).json({ error: true, message: errorMessages.USERS.badUserOrPassword });
       }
       const token = jwt.sign({ userId: user._id }, req.app.get("secretKey"), { expiresIn: "1h" });
-      res.status(200).json({ message: "Ok", token: token });
+      res.status(200).json({ message: "LogIn Ok", token });
     } catch (e) {
       next(e);
     }
