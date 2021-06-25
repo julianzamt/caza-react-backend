@@ -7,13 +7,7 @@ require("dotenv").config();
 module.exports = {
   create: async function (req, res, next) {
     console.log(req.body);
-    if (req.body.password !== req.body.confirmation) {
-      return res.status(400).json({
-        error: true,
-        message: errorMessages.USERS.confirmationMismatch,
-      });
-    } else if (!req.body.username || !req.body.password || !req.body.confirmation || !req.body.secretKey) {
-      console.log("body/pass");
+    if (!req.body.username || !req.body.password || !req.body.secretKey) {
       return res.status(400).json({
         error: true,
         message: errorMessages.USERS.allFieldsRequired,
@@ -32,10 +26,7 @@ module.exports = {
       const response = await document.save();
       res.status(200).json(response);
     } catch (e) {
-      return res.status(400).json({
-        error: true,
-        message: errorMessages.GENERAL.dbError,
-      });
+      next(e);
     }
   },
   update: async function (req, res, next) {},
@@ -52,12 +43,9 @@ module.exports = {
         return res.status(400).json({ error: true, message: errorMessages.badUserOrPassword });
       }
       const token = jwt.sign({ userId: user._id }, req.app.get("secretKey"), { expiresIn: "1h" });
-      res.status(200).json({ message: "login Ok", token: token });
+      res.status(200).json({ message: "Ok", token: token });
     } catch (e) {
-      return res.status(400).json({
-        error: true,
-        message: errorMessages.GENERAL.dbError,
-      });
+      next(e);
     }
   },
 };

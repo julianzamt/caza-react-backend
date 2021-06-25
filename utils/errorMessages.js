@@ -6,11 +6,10 @@ module.exports = {
     dbError: "Error accesing the DB. Please try again.",
   },
   USERS: {
-    userExist: "El {VALUE} ya existe",
-    passwordIncorrect: "El {PATH} debe contener al menos 1 letra, 1 minuscula, 1 mayuscula",
+    usernameAlreadyTaken: "El username ya existe. Por favor elija otro.",
+    passwordIncorrect: "El password debe contener como mínimo 6 caracteres, y al menos 1 número, 1 minúscula y una 1 mayúscula.",
     badUserOrPassword: "Usuario y/o contraseña son incorrectos.",
     allFieldsRequired: "Todos los campos son obligatorios.",
-    confirmationMismatch: "Password y confirmación no coinciden.",
-    secretKey: "Wrong Secret Key",
+    secretKey: "No, esa no es la Secret Key.",
   },
 };
