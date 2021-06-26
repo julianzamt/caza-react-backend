@@ -39,11 +39,11 @@ app.set("secretKey", process.env.JWT_SECRET_KEY);
 const validateUser = (req, res, next) => {
   const token = req.headers["x-access-token"];
   if (!token) {
-    res.status(500).json({ message: "user unauthenticated" });
+    res.status(500).json({ message: errorMessages.USERS.noToken });
   }
   jwt.verify(token, req.app.get("secretKey"), (err, decoded) => {
     if (err) {
-      res.json({ message: err.message });
+      res.status(500).json({ message: errorMessages.USERS.tokenExpired });
     } else {
       req.body.tokenData = decoded;
       next();

@@ -1,9 +1,10 @@
 module.exports = {
   GENERAL: {
-    required: "Required Field: {PATH}",
-    maxlength: "The maximum length for the {PATH} field is 50 chars (280 for page text field)",
-    unique: "Email/username already used",
-    dbError: "Error accesing the DB. Please try again.",
+    required: "Campo requerido: {PATH}.",
+    maxlength: "La extensión maxima permitida para {PATH} es {VALUE}",
+    dbError: "Error en la conexión con la base de datos. Por favor inténtelo nuevamente.",
+    s3Error: "Error en la conexión con el almacenamiento de imagenes. Por favor inténtelo nuevamente.",
+    badRequest: "El ingreso de datos no se realizó correctamente. Por favor inténtelo de nuevo.",
   },
   USERS: {
     usernameAlreadyTaken: "El username ya existe. Por favor elija otro.",
@@ -11,5 +12,7 @@ module.exports = {
     badUserOrPassword: "Usuario y/o contraseña incorrectos.",
     allFieldsRequired: "Todos los campos son obligatorios.",
     secretKey: "No, esa no es la Secret Key.",
+    tokenExpired: "Su sesión a expirado. Por favor vuelva a loguearse para continuar editando.",
+    noToken: "No es posible reconocer al usuario. Por favor vuelva a loguearse.",
   },
 };
