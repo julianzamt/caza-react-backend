@@ -6,7 +6,6 @@ const ImageSchema = new mongoose.Schema({
   path: {
     type: String,
     required: [true, errorMessages.GENERAL.required],
-    unique: true,
   },
   originalName: {
     type: String,

@@ -3,6 +3,7 @@ const { uploadFile, getFileStream, deleteFile } = require("../utils/s3");
 const fs = require("fs");
 const util = require("util");
 const unlinkFile = util.promisify(fs.unlink);
+const errorMessages = require("../utils/errorMessages");
 
 module.exports = {
   getAll: async function (req, res, next) {
@@ -11,24 +12,24 @@ module.exports = {
       res.status(200).json(equipamientos);
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
   getById: async function (req, res, next) {
     if (req.params.id === "undefined") {
-      return res.status(400).send({ error: true, message: "id can´t be undefined" });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     try {
       const equipamiento = await equipamientoModel.findById(req.params.id);
       res.status(200).json(equipamiento);
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
   getImageByKey: (req, res) => {
     if (req.params.key === "undefined") {
-      return res.status(500).send({ error: true, message: "image id is undefined" });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     try {
       const key = req.params.key;
@@ -36,7 +37,7 @@ module.exports = {
       readStream.pipe(res);
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t access to s3." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.s3Error });
     }
   },
   create: async function (req, res, next) {
@@ -57,7 +58,7 @@ module.exports = {
       }
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t upload to s3." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.s3Error });
     }
 
     // If success, insert mongo record
@@ -106,16 +107,16 @@ module.exports = {
         }
       } catch (e) {
         console.log(e);
-        return res.status(500).send({ error: true, message: "Couldn´t delete files from s3 - Record not saved on Mongo." });
+        return res.status(500).send({ error: true, message: errorMessages.GENERAL.s3Error });
       }
-      return res.status(500).send({ error: true, message: "Couldn´t save record in DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
   updateCover: async function (req, res, next) {
     if (req.params.id === "undefined") {
-      return res.status(400).send({ error: true, message: "document id is undefined" });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     } else if (req.file === undefined) {
-      return res.status(400).send({ error: true, message: "Cover not defined." });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     const documentId = req.params.id;
     const cover = req.file;
@@ -124,7 +125,7 @@ module.exports = {
       documentToBeUpdated = await equipamientoModel.findById({ _id: documentId });
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
     //Save new cover to S3 - Delete from server
     try {
@@ -132,7 +133,7 @@ module.exports = {
       await unlinkFile(cover.path);
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t upload to s3." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.s3Error });
     }
     // If success, update mongo document
     documentToBeUpdated.cover = {
@@ -146,17 +147,17 @@ module.exports = {
       return res.status(200).json(updatedEquipamiento);
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t update document in DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
   updateText: async function (req, res, next) {
     console.log(req);
     if (req.params.id === "undefined") {
       console.log("params");
-      return res.status(400).send({ error: true, message: "Document id is undefined" });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     } else if (!req.body) {
       console.log("body");
-      return res.status(400).send({ error: true, message: "req.body is undefined" });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     const documentId = req.params.id;
     let dataToBeUpdated = "";
@@ -164,7 +165,7 @@ module.exports = {
       dataToBeUpdated = await equipamientoModel.findById({ _id: documentId });
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
 
     dataToBeUpdated.title = req.body.title;
@@ -178,14 +179,14 @@ module.exports = {
       return res.status(200).json(updatedEquipamiento);
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t update record in DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
   updateImages: async function (req, res, next) {
     if (req.params.id === "undefined") {
-      return res.status(400).send({ error: true, message: "document id is undefined" });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     } else if (req.files === undefined) {
-      return res.status(400).send({ error: true, message: "Images is empty." });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     const images = req.files;
     const documentId = req.params.id;
@@ -194,7 +195,7 @@ module.exports = {
       documentToBeUpdated = await equipamientoModel.findById({ _id: documentId });
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
     //Save new images to S3
     try {
@@ -204,7 +205,7 @@ module.exports = {
       }
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t upload to s3." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.s3Error });
     }
     // If success, insert mongo record
     for (let image of images) {
@@ -220,15 +221,15 @@ module.exports = {
       return res.status(200).json(updatedEquipamiento);
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t update record in DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
   updateOrder: async function (req, res, next) {
     if (req.params.id === "undefined") {
-      return res.status(400).send({ error: true, message: "Document id can´t be undefined" });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     } else if (!req.body) {
       console.log("body");
-      return res.status(400).send({ error: true, message: "req.body is undefined" });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     const documentId = req.params.id;
     const newImagesArray = req.body;
@@ -241,12 +242,12 @@ module.exports = {
       return res.status(200).json(updatedEquipamiento);
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t access to DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
   deleteById: async function (req, res, next) {
     if (req.params.id === "undefined") {
-      return res.status(400).send({ error: true, message: "Document id can´t be undefined" });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     const id = req.params.id;
     try {
@@ -270,7 +271,7 @@ module.exports = {
       req.query.documentId === "undefined" ||
       req.query.imageId === "undefined"
     ) {
-      return res.status(400).send({ error: true, message: "Bad request" });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     const key = req.params.key;
     const documentId = req.query.documentId;
@@ -281,7 +282,7 @@ module.exports = {
       await deleteFile(key);
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t delete record from s3." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.s3Error });
     }
     try {
       document = await equipamientoModel.findById({ _id: documentId });
@@ -294,7 +295,7 @@ module.exports = {
       res.status(200).json(updatedDocument);
     } catch (e) {
       console.log(e);
-      return res.status(500).send({ error: true, message: "Couldn´t update document in DB." });
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
 };

@@ -1,4 +1,4 @@
-const proyectoModel = require("../models/proyectoModel");
+const productoModel = require("../models/productoModel");
 const { uploadFile, getFileStream, deleteFile } = require("../utils/s3");
 const fs = require("fs");
 const util = require("util");
@@ -8,8 +8,8 @@ const errorMessages = require("../utils/errorMessages");
 module.exports = {
   getAll: async function (req, res, next) {
     try {
-      const obras = await proyectoModel.find();
-      res.status(200).json(obras);
+      const productos = await productoModel.find();
+      res.status(200).json(productos);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
@@ -20,8 +20,8 @@ module.exports = {
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     try {
-      const obra = await proyectoModel.findById(req.params.id);
-      res.status(200).json(obra);
+      const producto = await productoModel.findById(req.params.id);
+      res.status(200).json(producto);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
@@ -29,7 +29,7 @@ module.exports = {
   },
   getImageByKey: (req, res) => {
     if (req.params.key === "undefined") {
-      return res.status(500).send({ error: true, message: errorMessages.GENERAL.badRequest });
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     try {
       const key = req.params.key;
@@ -82,7 +82,7 @@ module.exports = {
       });
     }
 
-    const document = new proyectoModel({
+    const document = new productoModel({
       title: req.body.title,
       subtitle: req.body.subtitle,
       year: req.body.year,
@@ -92,8 +92,8 @@ module.exports = {
     });
 
     try {
-      const newObra = await document.save();
-      res.status(200).json(newObra);
+      const newProducto = await document.save();
+      res.status(200).json(newProducto);
     } catch (e) {
       console.log(e);
       try {
@@ -115,14 +115,14 @@ module.exports = {
   updateCover: async function (req, res, next) {
     if (req.params.id === "undefined") {
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
-    } else if (req.file === undefined) {
+    } else if (!req.file) {
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     const documentId = req.params.id;
     const cover = req.file;
     let documentToBeUpdated = "";
     try {
-      documentToBeUpdated = await proyectoModel.findById({ _id: documentId });
+      documentToBeUpdated = await productoModel.findById({ _id: documentId });
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
@@ -142,9 +142,9 @@ module.exports = {
     };
 
     try {
-      await proyectoModel.updateOne({ _id: documentId }, documentToBeUpdated);
-      let updatedProyecto = await proyectoModel.findById({ _id: documentId });
-      return res.status(200).json(updatedProyecto);
+      await productoModel.updateOne({ _id: documentId }, documentToBeUpdated);
+      let updatedProducto = await productoModel.findById({ _id: documentId });
+      return res.status(200).json(updatedProducto);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
@@ -153,16 +153,14 @@ module.exports = {
   updateText: async function (req, res, next) {
     console.log(req);
     if (req.params.id === "undefined") {
-      console.log("params");
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     } else if (!req.body) {
-      console.log("body");
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     const documentId = req.params.id;
     let dataToBeUpdated = "";
     try {
-      dataToBeUpdated = await proyectoModel.findById({ _id: documentId });
+      dataToBeUpdated = await productoModel.findById({ _id: documentId });
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
@@ -174,9 +172,9 @@ module.exports = {
     dataToBeUpdated.text = req.body.text;
 
     try {
-      await proyectoModel.updateOne({ _id: documentId }, dataToBeUpdated);
-      let updatedProyecto = await proyectoModel.findById({ _id: documentId });
-      return res.status(200).json(updatedProyecto);
+      await productoModel.updateOne({ _id: documentId }, dataToBeUpdated);
+      let updatedProducto = await productoModel.findById({ _id: documentId });
+      return res.status(200).json(updatedProducto);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
@@ -185,14 +183,14 @@ module.exports = {
   updateImages: async function (req, res, next) {
     if (req.params.id === "undefined") {
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
-    } else if (req.files === undefined) {
+    } else if (!req.files) {
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     const images = req.files;
     const documentId = req.params.id;
     let documentToBeUpdated = "";
     try {
-      documentToBeUpdated = await proyectoModel.findById({ _id: documentId });
+      documentToBeUpdated = await productoModel.findById({ _id: documentId });
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
@@ -216,9 +214,9 @@ module.exports = {
       documentToBeUpdated.images.push(imageForMongo);
     }
     try {
-      await proyectoModel.updateOne({ _id: documentId }, documentToBeUpdated);
-      let updatedProyecto = await proyectoModel.findById({ _id: documentId });
-      return res.status(200).json(updatedProyecto);
+      await productoModel.updateOne({ _id: documentId }, documentToBeUpdated);
+      let updatedProducto = await productoModel.findById({ _id: documentId });
+      return res.status(200).json(updatedProducto);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
@@ -235,11 +233,11 @@ module.exports = {
     const newImagesArray = req.body;
     let documentToBeUpdated = "";
     try {
-      documentToBeUpdated = await proyectoModel.findById({ _id: documentId });
+      documentToBeUpdated = await productoModel.findById({ _id: documentId });
       documentToBeUpdated.images = newImagesArray;
-      await proyectoModel.updateOne({ _id: documentId }, documentToBeUpdated);
-      let updatedProyecto = await proyectoModel.findById({ _id: documentId });
-      return res.status(200).json(updatedProyecto);
+      await productoModel.updateOne({ _id: documentId }, documentToBeUpdated);
+      let updatedProducto = await productoModel.findById({ _id: documentId });
+      return res.status(200).json(updatedProducto);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
@@ -251,17 +249,16 @@ module.exports = {
     }
     const id = req.params.id;
     try {
-      const record = await proyectoModel.findById({ _id: id });
+      const record = await productoModel.findById({ _id: id });
       if (record.cover.length) await deleteFile(record.cover[0].path);
       if (record.images.length) {
         record.images.forEach(image => deleteFile(image.path));
       }
-      const deleteStatus = await proyectoModel.deleteOne({ _id: id });
+      const deleteStatus = await productoModel.deleteOne({ _id: id });
       res.status(200).json(deleteStatus);
     } catch (e) {
       console.log(e);
-      e.status = 400;
-      res.json(e);
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
   deleteImageByKey: async function (req, res, next) {
@@ -274,6 +271,7 @@ module.exports = {
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
     const key = req.params.key;
+    const section = req.query.section;
     const documentId = req.query.documentId;
     const imageId = req.query.imageId;
     const coverFlag = req.query.coverFlag;
@@ -285,7 +283,7 @@ module.exports = {
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.s3Error });
     }
     try {
-      document = await proyectoModel.findById({ _id: documentId });
+      document = await productoModel.findById({ _id: documentId });
       if (coverFlag === "true") {
         await document.cover.id(imageId).remove();
       } else {

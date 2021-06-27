@@ -17,11 +17,11 @@ const {
 
 router.get("/", getAll);
 router.get("/images/:key", getImageByKey);
-router.post("/", upload.array("images"), create);
-router.delete("/images/:key", deleteImageByKey);
-router.delete("/:id", deleteById);
-router.put("/:id/update-text", updateText);
-router.put("/:id/update-images", upload.array("images"), updateImages);
-router.put("/:id/update-order", updateOrder);
+router.post("/", (req, res, next) => req.app.validateUser(req, res, next), upload.array("images"), create);
+router.delete("/images/:key", (req, res, next) => req.app.validateUser(req, res, next), deleteImageByKey);
+router.delete("/:id", (req, res, next) => req.app.validateUser(req, res, next), deleteById);
+router.put("/:id/update-text", (req, res, next) => req.app.validateUser(req, res, next), updateText);
+router.put("/:id/update-images", (req, res, next) => req.app.validateUser(req, res, next), upload.array("images"), updateImages);
+router.put("/:id/update-order", (req, res, next) => req.app.validateUser(req, res, next), updateOrder);
 
 module.exports = router;

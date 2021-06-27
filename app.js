@@ -15,7 +15,7 @@ const obrasRouter = require("./routes/obras");
 const proyectosRouter = require("./routes/proyectos");
 const equipamientosRouter = require("./routes/equipamientos");
 const documentacionRouter = require("./routes/documentacion");
-// const productosRouter = require("./routes/productos");
+const productosRouter = require("./routes/productos");
 
 var app = express();
 
@@ -30,7 +30,7 @@ app.use("/obras", obrasRouter);
 app.use("/proyectos", proyectosRouter);
 app.use("/equipamientos", equipamientosRouter);
 app.use("/documentacion", documentacionRouter);
-// app.use("/productos", productosRouter);
+app.use("/productos", productosRouter);
 app.use("/users", usersRouter);
 
 //Token configuration
@@ -39,11 +39,11 @@ app.set("secretKey", process.env.JWT_SECRET_KEY);
 const validateUser = (req, res, next) => {
   const token = req.headers["x-access-token"];
   if (!token) {
-    res.status(500).json({ message: errorMessages.USERS.noToken });
+    res.status(401).json({ message: errorMessages.USERS.noToken });
   }
   jwt.verify(token, req.app.get("secretKey"), (err, decoded) => {
     if (err) {
-      res.status(500).json({ message: errorMessages.USERS.tokenExpired });
+      res.status(401).json({ message: errorMessages.USERS.tokenExpired });
     } else {
       req.body.tokenData = decoded;
       next();
