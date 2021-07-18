@@ -15,6 +15,7 @@ const {
   updateCover,
   updateText,
   updateImages,
+  updateCollectionOrder,
 } = require("../controllers/obrasController");
 
 router.get("/", getAll);
@@ -32,5 +33,6 @@ router.put("/:id/update-cover", (req, res, next) => req.app.validateUser(req, re
 router.put("/:id/update-text", (req, res, next) => req.app.validateUser(req, res, next), updateText);
 router.put("/:id/update-images", (req, res, next) => req.app.validateUser(req, res, next), upload.array("images"), updateImages);
 router.put("/:id/update-order", (req, res, next) => req.app.validateUser(req, res, next), updateOrder);
+router.put("/update-collection-order", (req, res, next) => req.app.validateUser(req, res, next), updateCollectionOrder);
 
 module.exports = router;

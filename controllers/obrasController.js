@@ -4,6 +4,7 @@ const fs = require("fs");
 const util = require("util");
 const unlinkFile = util.promisify(fs.unlink);
 const errorMessages = require("../utils/errorMessages");
+const sharp = require("sharp");
 
 module.exports = {
   getAll: async function (req, res, next) {
@@ -43,6 +44,12 @@ module.exports = {
   create: async function (req, res, next) {
     const cover = req.files["cover"] ? req.files["cover"][0] : null;
     const images = req.files["images"];
+
+    // const buffer = await getStream(cover.stream);
+
+    // // resize images to supply responsive design
+    // const test = await sharp(buffer).resize({ width: 300 }).toBuffer();
+    // console.log("test " + test);
 
     //upload images to s3, then erase from server
     try {
@@ -295,5 +302,24 @@ module.exports = {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
+  },
+  updateCollectionOrder: async function (req, res, next) {
+    if (!req.body) {
+      console.log("empty body error");
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
+    }
+    const newCollectionOrder = req.body;
+    console.log(newCollectionOrder);
+    // let documentToBeUpdated = "";
+    // try {
+    //   documentToBeUpdated = await obraModel.findById({ _id: documentId });
+    //   documentToBeUpdated.images = newImagesArray;
+    //   await obraModel.updateOne({ _id: documentId }, documentToBeUpdated);
+    //   let updatedObra = await obraModel.findById({ _id: documentId });
+    //   return res.status(200).json(updatedObra);
+    // } catch (e) {
+    //   console.log(e);
+    //   return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
+    // }
   },
 };
