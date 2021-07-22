@@ -313,6 +313,7 @@ module.exports = {
     }
 
     dataToBeUpdated.index = req.body.index;
+    console.log("INDEX " + req.body.index);
 
     try {
       await obraModel.updateOne({ _id: documentId }, dataToBeUpdated);
