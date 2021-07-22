@@ -1,4 +1,4 @@
-const documentacionModel = require("../models/documentacionModel");
+const documentacionModel = require("../models/documentacionModel.js");
 const { uploadFile, getFileStream, deleteFile } = require("../utils/s3");
 const fs = require("fs");
 const util = require("util");
