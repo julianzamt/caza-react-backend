@@ -8,7 +8,7 @@ const {
   getAll,
   getImageByKey,
   create,
-  updateOrder,
+  updateImagesOrder,
   deleteImageByKey,
   deleteById,
   updateText,
@@ -22,6 +22,6 @@ router.delete("/images/:key", (req, res, next) => req.app.validateUser(req, res,
 router.delete("/:id", (req, res, next) => req.app.validateUser(req, res, next), deleteById);
 router.put("/:id/update-text", (req, res, next) => req.app.validateUser(req, res, next), updateText);
 router.put("/:id/update-images", (req, res, next) => req.app.validateUser(req, res, next), upload.array("images"), updateImages);
-router.put("/:id/update-order", (req, res, next) => req.app.validateUser(req, res, next), updateOrder);
+router.put("/:id/update-order", (req, res, next) => req.app.validateUser(req, res, next), updateImagesOrder);
 
 module.exports = router;

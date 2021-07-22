@@ -224,7 +224,7 @@ module.exports = {
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
-  updateOrder: async function (req, res, next) {
+  updateImagesOrder: async function (req, res, next) {
     if (req.params.id === "undefined") {
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     } else if (!req.body) {
@@ -293,6 +293,32 @@ module.exports = {
       }
       const updatedDocument = await document.save();
       res.status(200).json(updatedDocument);
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
+    }
+  },
+  updateIndex: async function (req, res, next) {
+    if (req.params.id === "undefined") {
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
+    } else if (!req.body) {
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
+    }
+    const documentId = req.params.id;
+    let dataToBeUpdated = "";
+    try {
+      dataToBeUpdated = await proyectoModel.findById({ _id: documentId });
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
+    }
+
+    dataToBeUpdated.index = req.body.index;
+
+    try {
+      await proyectoModel.updateOne({ _id: documentId }, dataToBeUpdated);
+      let updatedProyecto = await proyectoModel.findById({ _id: documentId });
+      return res.status(200).json(updatedProyecto);
     } catch (e) {
       console.log(e);
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });

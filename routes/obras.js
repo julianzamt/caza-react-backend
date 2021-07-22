@@ -9,13 +9,13 @@ const {
   getById,
   getImageByKey,
   create,
-  updateOrder,
   deleteImageByKey,
   deleteById,
   updateCover,
   updateText,
   updateImages,
-  updateCollectionOrder,
+  updateIndex,
+  updateImagesOrder,
 } = require("../controllers/obrasController");
 
 router.get("/", getAll);
@@ -32,7 +32,7 @@ router.delete("/:id", (req, res, next) => req.app.validateUser(req, res, next), 
 router.put("/:id/update-cover", (req, res, next) => req.app.validateUser(req, res, next), upload.single("cover"), updateCover);
 router.put("/:id/update-text", (req, res, next) => req.app.validateUser(req, res, next), updateText);
 router.put("/:id/update-images", (req, res, next) => req.app.validateUser(req, res, next), upload.array("images"), updateImages);
-router.put("/:id/update-order", (req, res, next) => req.app.validateUser(req, res, next), updateOrder);
-router.put("/update-collection-order", (req, res, next) => req.app.validateUser(req, res, next), updateCollectionOrder);
+router.put("/:id/update-order", (req, res, next) => req.app.validateUser(req, res, next), updateImagesOrder);
+router.put("/:id/update-index", (req, res, next) => req.app.validateUser(req, res, next), updateIndex);
 
 module.exports = router;

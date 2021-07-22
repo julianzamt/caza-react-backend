@@ -9,7 +9,7 @@ const sharp = require("sharp");
 module.exports = {
   getAll: async function (req, res, next) {
     try {
-      const obras = await obraModel.find();
+      const obras = await obraModel.find().sort({ _id: -1 });
       res.status(200).json(obras);
     } catch (e) {
       console.log(e);
@@ -44,12 +44,6 @@ module.exports = {
   create: async function (req, res, next) {
     const cover = req.files["cover"] ? req.files["cover"][0] : null;
     const images = req.files["images"];
-
-    // const buffer = await getStream(cover.stream);
-
-    // // resize images to supply responsive design
-    // const test = await sharp(buffer).resize({ width: 300 }).toBuffer();
-    // console.log("test " + test);
 
     //upload images to s3, then erase from server
     try {
@@ -229,7 +223,7 @@ module.exports = {
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
-  updateOrder: async function (req, res, next) {
+  updateImagesOrder: async function (req, res, next) {
     if (req.params.id === "undefined") {
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     } else if (!req.body) {
@@ -303,23 +297,30 @@ module.exports = {
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
-  updateCollectionOrder: async function (req, res, next) {
-    if (!req.body) {
-      console.log("empty body error");
+  updateIndex: async function (req, res, next) {
+    if (req.params.id === "undefined") {
+      return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
+    } else if (!req.body) {
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     }
-    const newCollectionOrder = req.body;
-    console.log(newCollectionOrder);
-    // let documentToBeUpdated = "";
-    // try {
-    //   documentToBeUpdated = await obraModel.findById({ _id: documentId });
-    //   documentToBeUpdated.images = newImagesArray;
-    //   await obraModel.updateOne({ _id: documentId }, documentToBeUpdated);
-    //   let updatedObra = await obraModel.findById({ _id: documentId });
-    //   return res.status(200).json(updatedObra);
-    // } catch (e) {
-    //   console.log(e);
-    //   return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
-    // }
+    const documentId = req.params.id;
+    let dataToBeUpdated = "";
+    try {
+      dataToBeUpdated = await obraModel.findById({ _id: documentId });
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
+    }
+
+    dataToBeUpdated.index = req.body.index;
+
+    try {
+      await obraModel.updateOne({ _id: documentId }, dataToBeUpdated);
+      let updatedObra = await obraModel.findById({ _id: documentId });
+      return res.status(200).json(updatedObra);
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
+    }
   },
 };

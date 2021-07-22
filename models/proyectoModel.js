@@ -14,6 +14,7 @@ const ImageSchema = new mongoose.Schema({
 });
 
 const ProyectoSchema = new mongoose.Schema({
+  index: { type: Number, default: 0 },
   title: {
     type: String,
     required: [true, errorMessages.GENERAL.required],

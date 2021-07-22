@@ -150,7 +150,7 @@ module.exports = {
       return res.status(500).send({ error: true, message: errorMessages.GENERAL.dbError });
     }
   },
-  updateOrder: async function (req, res, next) {
+  updateImagesOrder: async function (req, res, next) {
     if (req.params.id === "undefined") {
       return res.status(400).send({ error: true, message: errorMessages.GENERAL.badRequest });
     } else if (!req.body) {
