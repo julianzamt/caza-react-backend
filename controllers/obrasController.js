@@ -9,7 +9,7 @@ const sharp = require("sharp");
 module.exports = {
   getAll: async function (req, res, next) {
     try {
-      const obras = await obraModel.find().sort({ _id: -1 });
+      const obras = await obraModel.find().sort({ index: 1 });
       res.status(200).json(obras);
     } catch (e) {
       console.log(e);
