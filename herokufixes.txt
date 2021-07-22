@@ -1,0 +1,4 @@
+package.json scripts:
+// "server": "nodemon node ./bin/www",
+    // "client": "npm start --prefix ../frontend",
+    // "dev": "concurrently \"npm run server\" \"npm run client\""
