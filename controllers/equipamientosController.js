@@ -8,7 +8,7 @@ const errorMessages = require("../utils/errorMessages");
 module.exports = {
   getAll: async function (req, res, next) {
     try {
-      const equipamientos = await equipamientoModel.find();
+      const equipamientos = await equipamientoModel.find().sort({ index: 1 });
       res.status(200).json(equipamientos);
     } catch (e) {
       console.log(e);
